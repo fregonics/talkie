@@ -1,6 +1,7 @@
 package com.fregonics.github.talkie;
 
 import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 
@@ -10,6 +11,7 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     WifiP2pManager wifiP2pManager;
     WifiP2pManager.Channel mChannel;
     BroadcastReceiver mReceiver;
+    IntentFilter mWifiP2pIntentFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +40,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
         setWfiP2p();
+
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mReceiver, mWifiP2pIntentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mReceiver);
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -66,5 +84,21 @@ public class MainActivity extends AppCompatActivity {
         mChannel = wifiP2pManager.initialize(this,getMainLooper(),null);
         mReceiver = new WiFiDirectBroadcastReceiver(wifiP2pManager,mChannel,this);
 
+        mWifiP2pIntentFilter = new IntentFilter();
+        mWifiP2pIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        mWifiP2pIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+        mWifiP2pIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        mWifiP2pIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+        wifiP2pManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                Log.d(MainActivity.class.getSimpleName(), "DISCOVERING PEERS");
+            }
+
+            @Override
+            public void onFailure(int i) {
+                Log.d(MainActivity.class.getSimpleName(), "NOT DISCOVERING PEERS");
+            }
+        });
     }
 }

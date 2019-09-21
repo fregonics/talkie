@@ -1,5 +1,7 @@
 package com.fregonics.github.talkie;
 
+import android.content.BroadcastReceiver;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -13,6 +15,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
+
+    WifiP2pManager wifiP2pManager;
+    WifiP2pManager.Channel mChannel;
+    BroadcastReceiver mReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        setWfiP2p();
     }
 
     @Override
@@ -51,5 +59,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    void setWfiP2p() {
+        wifiP2pManager = (WifiP2pManager) getSystemService(WIFI_P2P_SERVICE);
+        mChannel = wifiP2pManager.initialize(this,getMainLooper(),null);
+        mReceiver = new WiFiDirectBroadcastReceiver(wifiP2pManager,mChannel,this);
+
     }
 }

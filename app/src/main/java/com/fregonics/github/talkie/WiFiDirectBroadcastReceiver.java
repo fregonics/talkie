@@ -24,7 +24,10 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         Log.d(WiFiDirectBroadcastReceiver.class.getSimpleName(), "ACTION: " + action);
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
-            // Check to see if Wi-Fi is enabled and notify appropriate activity
+            int wifiP2pState = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE,-1);
+            if(wifiP2pState != WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
+                Log.d(WiFiDirectBroadcastReceiver.class.getSimpleName(), "WIFI P2P DISABLED");
+            }
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
             // Call WifiP2pManager.requestPeers() to get a list of current peers
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {

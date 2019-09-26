@@ -43,32 +43,26 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             int wifiP2pState = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE,-1);
             if(wifiP2pState == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
                 Log.d(WiFiDirectBroadcastReceiver.class.getSimpleName(), "WIFI P2P ENABLED");
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && mainActivity.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-                    mainActivity.requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                            MY_PERMISSION_COARSE_LOCATION);
-                    //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
 
-                } else {
-                    manager.requestPeers(channel, new WifiP2pManager.PeerListListener() {
-                        @Override
-                        public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
-                            Log.d(MainActivity.class.getSimpleName(), "PEER AVAILABLE");
-                            Collection<WifiP2pDevice> devices = wifiP2pDeviceList.getDeviceList();
-                            Log.d(MainActivity.class.getSimpleName(), "NR OF DEVICES" + devices.size());
-                        }
-                    });
-                }
             }
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
             // Call WifiP2pManager.requestPeers() to get a list of current peers
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && mainActivity.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                mainActivity.requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        MY_PERMISSION_COARSE_LOCATION);
+                //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
 
+            } else {
                 manager.requestPeers(channel, new WifiP2pManager.PeerListListener() {
                     @Override
                     public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
                         Log.d(MainActivity.class.getSimpleName(), "PEER AVAILABLE");
+                        Collection<WifiP2pDevice> devices = wifiP2pDeviceList.getDeviceList();
+                        Log.d(MainActivity.class.getSimpleName(), "NR OF DEVICES" + devices.size());
                         Log.d(MainActivity.class.getSimpleName(), wifiP2pDeviceList.toString());
                     }
                 });
+            }
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             // Respond to new connection or disconnections
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {

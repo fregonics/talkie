@@ -56,9 +56,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 manager.requestPeers(channel, new WifiP2pManager.PeerListListener() {
                     @Override
                     public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
-                        Log.d(MainActivity.class.getSimpleName(), "PEER AVAILABLE");
-                        Collection<WifiP2pDevice> devices = wifiP2pDeviceList.getDeviceList();
-                        Log.d(MainActivity.class.getSimpleName(), "NR OF DEVICES" + devices.size());
                         Log.d(MainActivity.class.getSimpleName(), wifiP2pDeviceList.toString());
                     }
                 });

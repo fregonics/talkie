@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -22,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Collection;
 
@@ -66,9 +68,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -83,8 +82,30 @@ public class MainActivity extends AppCompatActivity {
         Log.d(MainActivity.class.getSimpleName(), "UPDATE WIFI P2P DEVICE LIST");
         mDeviceCollection = deviceList.getDeviceList();
         for(WifiP2pDevice device: mDeviceCollection) {
-            TextView textView = new TextView(this);
+            final TextView textView = new TextView(this);
             textView.setText(device.deviceAddress);
+            textView.setTextSize(20);
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    WifiP2pConfig config = new WifiP2pConfig();
+                    final TextView tv = (TextView) view;
+                    config.deviceAddress = tv.getText().toString();
+                    wifiP2pManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
+                        @Override
+                        public void onSuccess() {
+                            Log.d(MainActivity.class.getSimpleName(),"CONNECTED TO: " + tv.getText().toString());
+                            Toast.makeText(getApplicationContext(),"CONNECTION SUCCESS",Toast.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void onFailure(int i) {
+                            Log.d(MainActivity.class.getSimpleName(),"FAIL TO: " + tv.getText().toString());
+                            Toast.makeText(getApplicationContext(),"CONNECTION FAIL",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            });
             mDevicesLinearLayout.addView(textView);
         }
     }

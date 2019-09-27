@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.Collection;
 
@@ -77,6 +79,16 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void onUpdateWifiP2pDevicesList(WifiP2pDeviceList deviceList) {
+        Log.d(MainActivity.class.getSimpleName(), "UPDATE WIFI P2P DEVICE LIST");
+        mDeviceCollection = deviceList.getDeviceList();
+        for(WifiP2pDevice device: mDeviceCollection) {
+            TextView textView = new TextView(this);
+            textView.setText(device.deviceAddress);
+            mDevicesLinearLayout.addView(textView);
+        }
+    }
+
     void setUiComponents() {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -93,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
         mDevicesLinearLayout = findViewById(R.id.ll_devices);
     }
-    
+
     void setWfiP2p() {
         wifiP2pManager = (WifiP2pManager) getSystemService(WIFI_P2P_SERVICE);
         mChannel = wifiP2pManager.initialize(this,getMainLooper(),null);

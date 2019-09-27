@@ -43,7 +43,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             int wifiP2pState = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE,-1);
             if(wifiP2pState == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
                 Log.d(WiFiDirectBroadcastReceiver.class.getSimpleName(), "WIFI P2P ENABLED");
-
             }
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
             // Call WifiP2pManager.requestPeers() to get a list of current peers
@@ -57,6 +56,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                     @Override
                     public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
                         Log.d(MainActivity.class.getSimpleName(), wifiP2pDeviceList.toString());
+                        mainActivity.onUpdateWifiP2pDevicesList(wifiP2pDeviceList);
                     }
                 });
             }
